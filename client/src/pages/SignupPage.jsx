@@ -1,39 +1,46 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { LoaderPinwheel, Eye, EyeClosed } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axiosInstance from "../config/Axios";
+import axiosInstance from "../lib/Axios";
+import { toast } from "react-toastify";
 
 const SignupPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const {mutate, isPending, error}= useMutation({
-    mutationFn:async()=>{
-      
-      const response = await axiosInstance.post("/auth/signup",signupData);
+  const {
+    mutate: signupMutation,
+    isPending,
+    error,
+  } = useMutation({
+    mutationFn: async () => {
+      const response = await axiosInstance.post("/auth/signup", signupData);
       return response.data;
     },
-    onSuccess:()=>queryClient.invalidateQueries({queryKey:['authUser']}),
-  })
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["authUser"] }),
+  });
   const [signupData, setSignupData] = useState({
     fullName: "",
     email: "",
     password: "",
   });
 
-  
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setSignupData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSignup =  (e) => {
+  const handleSignup = (e) => {
     e.preventDefault();
-    mutate();
+    signupMutation();
   };
 
+  useEffect(() => {
+    if (error) {
+      toast.error(error?.response?.data?.message || "Something went wrong!");
+    }
+  }, [error]);
 
   return (
     <div
@@ -41,9 +48,8 @@ const SignupPage = () => {
       data-theme="synthwave"
     >
       <div className="border border-primary/25 flex flex-col lg:flex-row w-full max-w-5xl mx-auto bg-base-100 rounded-xl shadow-lg overflow-hidden h-[90vh]">
-        
         {/* Left Side - Signup Form */}
-        <div className="w-full lg:w-1/2 p-4 sm:p-6 flex flex-col justify-center">
+        <div className="relative w-full lg:w-1/2 p-4 sm:p-6 flex flex-col justify-center">
           <div className="mb-4 flex items-center justify-center gap-2">
             <LoaderPinwheel className="size-8 sm:size-9 text-primary" />
             <span className="text-2xl sm:text-3xl font-bold font-mono bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary tracking-wider">
@@ -53,7 +59,9 @@ const SignupPage = () => {
 
           <form onSubmit={handleSignup} className="space-y-4">
             <div>
-              <h2 className="text-lg sm:text-xl font-semibold">Create an Account</h2>
+              <h2 className="text-lg sm:text-xl font-semibold">
+                Create an Account
+              </h2>
               <p className="text-xs sm:text-sm opacity-70">
                 Join Rimofy and start your language learning adventure
               </p>
@@ -108,13 +116,19 @@ const SignupPage = () => {
               >
                 {showPassword ? <EyeClosed size={18} /> : <Eye size={18} />}
               </span>
-              <p className="text-xs text-gray-500 mt-1">Password must be at least 6 characters long</p>
+              <p className="text-xs text-gray-500 mt-1">
+                Password must be at least 6 characters long
+              </p>
             </div>
 
             {/* Terms */}
             <div className="form-control">
               <label className="label cursor-pointer justify-start gap-2">
-                <input type="checkbox" className="checkbox checkbox-sm" required />
+                <input
+                  type="checkbox"
+                  className="checkbox checkbox-sm"
+                  required
+                />
                 <span className="text-xs leading-tight">
                   I agree to the{" "}
                   <span
@@ -135,7 +149,11 @@ const SignupPage = () => {
             </div>
 
             {/* Button */}
-            <button className="btn btn-primary w-full" type="submit" disabled={isPending}>
+            <button
+              className="btn btn-primary w-full"
+              type="submit"
+              disabled={isPending}
+            >
               {isPending ? "Sigining up..." : "Create Account"}
             </button>
 
@@ -163,7 +181,8 @@ const SignupPage = () => {
               Connect with language partners worldwide
             </h2>
             <p className="opacity-70 text-sm">
-              Practice conversations, make friends, and improve your language skills together
+              Practice conversations, make friends, and improve your language
+              skills together
             </p>
           </div>
         </div>
