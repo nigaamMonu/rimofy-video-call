@@ -4,7 +4,7 @@ import { useState } from "react";
 import { ShuffleIcon, CameraIcon, MapPinIcon, ShipWheelIcon, LoaderIcon } from "lucide-react";
 
 // local imports
-import useAuthUser from "../hooks/useAuthUser";
+import useAuthUser from "../hooks/useAuthUser.js";
 import { completeOnboarding } from "../lib/api";
 
 import { LANGUAGES } from "../constants/index";

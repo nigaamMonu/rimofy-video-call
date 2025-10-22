@@ -1,9 +1,11 @@
 import React from "react";
 import { Loader2 } from "lucide-react";
+import { useThemeStore } from "../store/useThemeStore.js";
 
 const PageLoader = () => {
+  const {theme } = useThemeStore();
   return (
-    <div className="h-screen w-screen flex flex-col items-center justify-center bg-base-100 text-primary">
+    <div className="h-screen w-screen flex flex-col items-center justify-center bg-base-100 text-primary" data-theme={theme}  >
       {/* Spinner */}
       <Loader2 className="text-secondary animate-spin size-10 sm:size-12 mb-4" />
 
